@@ -488,8 +488,6 @@ if __name__ == '__main__':
     print(data_file.format_user_data(data_file.users))
     print(data_file.format_access_data(data_file.programs, data_file.folder_access, data_file.lis_access,
                                        data_file.access_1C, data_file.crm_access))
-    # print(data_file.__dict__)
-    # print()
 
     # Создание учётной записи пользователя и добавление групп доступа
     if data_file.users:
