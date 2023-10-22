@@ -2,14 +2,14 @@ import sqlite3 as sq
 import subprocess
 import random
 from time import sleep
+from os import getlogin
+from re import findall
+from subprocess import run
 from string import ascii_letters, punctuation, digits
 from win32api import SetConsoleTitle
 from colorama import init, Fore, Back
 from xlrd import open_workbook
-from re import findall
-from os import getlogin
 from transliterate import translit
-from subprocess import run
 from tabulate import tabulate
 
 
