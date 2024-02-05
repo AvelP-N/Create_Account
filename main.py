@@ -2,15 +2,39 @@ import sqlite3 as sq
 import subprocess
 import random
 from time import sleep
-from os import getlogin
-from re import findall
-from subprocess import run
 from string import ascii_letters, punctuation, digits
 from win32api import SetConsoleTitle
 from colorama import init, Fore, Back
 from xlrd import open_workbook
+from re import findall
+from os import getlogin
 from transliterate import translit
+from subprocess import run
 from tabulate import tabulate
+
+
+"""
+CreateAccount v1.6
+Поиск ФИО пользователя теперь происходит по трём или четырём словам
+
+CreateAccount v1.5
+Изменено регулярное выражение для поиска ФИО, где используется тире.
+
+CreateAccount v1.4
+При создании случайного пароля для ЛИС систем в Портале не принимает символы ['<>], теперь заменяются цифрами
+
+CreateAccount v1.3
+Добавлена пауза в 3 секунды, после добавления доступов. Группа YandexUser не успевала прописаться в профиле пользователя
+
+CreateAccount v1.2
+В метод show_other_permissions добавлен вывод информации о дочернем запросе Битрикс 24
+
+CreateAccount v1.1
+В классе CreateAccount добавлен try/except где происходит подключение к Базе Данных
+
+CreateAccount v1.0
+Создание нового пользователя, добавление групп доступов, вывод заполненного шаблона с данными предоставленных доступов.
+"""
 
 
 class Console:
@@ -20,7 +44,7 @@ class Console:
     def decoration_console():
         """Заголовок консоли и описание"""
 
-        SetConsoleTitle('Create Account v1.4')
+        SetConsoleTitle('Create Account v1.6')
         print(f'{Fore.BLACK}{Back.YELLOW} *** Create new account *** ', '\n')
 
     @staticmethod
@@ -442,9 +466,9 @@ class ParsFile(Console, CreateAccount):
                 for number_row in range(self.start_row_user, self.end_row_user):
                     # print(self.sheet.row_values(number_row))
                     data = self.sheet.row_values(number_row, 1, 11)
-                    cell_data = findall(r'[А-Я][а-яё]+', data[0])
+                    cell_data = findall(r'[А-Я][а-яё]+(?:-[А-Я][а-яё]+)?', data[0])
 
-                    if len(cell_data) == 3:
+                    if len(cell_data) in (3, 4):
                         user_details = User(data[0], data[2], data[3], data[4], data[5], data[6], data[7], data[8],
                                             data[9])
                         self.users.append(user_details)
@@ -488,6 +512,8 @@ if __name__ == '__main__':
     print(data_file.format_user_data(data_file.users))
     print(data_file.format_access_data(data_file.programs, data_file.folder_access, data_file.lis_access,
                                        data_file.access_1C, data_file.crm_access))
+    # print(data_file.__dict__)
+    # print()
 
     # Создание учётной записи пользователя и добавление групп доступа
     if data_file.users:
